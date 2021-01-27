@@ -1,0 +1,14 @@
+.header{
+    height: 100px;
+}
+
+.logo {
+    display: inline-block;
+    height: 80px;
+    width: 200px;
+    overflow: hidden;
+}
+
+.logo img{
+    height: 40px;
+}

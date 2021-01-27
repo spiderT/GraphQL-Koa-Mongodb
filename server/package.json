@@ -1,0 +1,15 @@
+{
+  "name": "graphql",
+  "version": "0.1.0",
+  "scripts": {
+    "start": "node ./app.js"
+  },
+  "dependencies": {
+    "@koa/cors": "^2.2.3",
+    "apollo-server-koa": "^2.19.2",
+    "koa": "^2.13.1",
+    "koa-bodyparser": "^4.3.0",
+    "koa-router": "^10.0.0",
+    "mongoose": "^5.11.13"
+  }
+}
