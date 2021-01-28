@@ -22,4 +22,23 @@ function getSex(sex) {
   return map[sex] || "未知";
 }
 
-export { postData, getSex };
+/**
+ * 处理对象参数值，排除对象参数值为”“、null、undefined，并返回一个新对象
+ **/
+function formatGQLParams(obj) {
+  const arr = [];
+  for (const key in obj) {
+    let v = obj[key];
+    if (v) {
+      if (typeof v === "object") {
+        v = `${JSON.stringify(v)}`;
+      } else if (typeof v === "string") {
+        v = `"${v}"`;
+      }
+      arr.push(`${key}:${v}`);
+    }
+  }
+  return arr.join(",");
+}
+
+export { postData, getSex, formatGQLParams };

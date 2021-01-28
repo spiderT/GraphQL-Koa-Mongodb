@@ -1,19 +1,16 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Form, Input, InputNumber, Modal, Radio } from 'antd';
-import { postData } from '../utils';
-const layout = {
-    labelCol: {
-        span: 8,
-    },
-    wrapperCol: {
-        span: 16,
-    },
-};
+import { postData, formatGQLParams } from '../utils';
+import { URL } from '../constants';
 
-const useResetFormOnCloseModal = ({ form, visible }) => {
+const useResetFormOnCloseModal = ({ form, visible, defaultData }) => {
     const prevVisibleRef = useRef();
     useEffect(() => {
         prevVisibleRef.current = visible;
+        // 编辑回填
+        if (defaultData?._id) {
+            form.setFieldsValue(defaultData);
+        }
     }, [visible]);
     const prevVisible = prevVisibleRef.current;
     useEffect(() => {
@@ -23,41 +20,29 @@ const useResetFormOnCloseModal = ({ form, visible }) => {
     }, [visible]);
 };
 
-const ModalForm = ({ visible, onCancel, handleUpdate }) => {
+const ModalForm = ({ visible, onCancel, handleUpdate, defaultData }) => {
     const [form] = Form.useForm();
     useResetFormOnCloseModal({
         form,
         visible,
+        defaultData
     });
 
     const onOk = () => {
         form.submit();
     };
 
-    const onFinish = (values) => {
-        console.log(values)
-        const { name, sex, age, phone, major, grade } = values;
-        // todo 调新增接口
-        postData('http://localhost:5000/graphql', {
+    const addData = (params) => {
+        return postData(URL, {
             query: `
-              mutation {
-                addStudent (post: {
-                    name: "${name}"
-                    sex: "${sex}"
-                    age: ${Number(age)}
-                    phone: "${phone}"
-                    major: "${major}"
-                    grade: "${grade}"
-                }) {
-                    name
-                    sex
-                    age
-                    phone
-                    major
-                    grade
+                mutation {
+                    addStudent (post: {
+                       ${formatGQLParams(params)}
+                    }) {
+                        count
+                    }
                 }
-              }
-            `
+                `
         })
             .then(data => {
                 console.log(data)
@@ -65,11 +50,44 @@ const ModalForm = ({ visible, onCancel, handleUpdate }) => {
                 handleUpdate();
             })
             .catch(error => console.error(error))
+    }
 
+    const editData = (params) => {
+        return postData(URL, {
+            query: `
+                mutation {
+                    editStudent (post: {
+                        ${formatGQLParams(params)}
+                    }) {
+                        count
+                    }
+                }
+                `
+        })
+            .then(data => {
+                console.log(data)
+                onCancel();
+                handleUpdate();
+            })
+            .catch(error => console.error(error))
+    }
+
+    const onFinish = (values) => {
+        console.log(values)
+        const params = {
+            ...values, age: Number(values.age)
+        }
+        if (defaultData?._id) {
+            // 编辑接口
+            editData({ ...params, _id: defaultData._id })
+        } else {
+            // 新增接口
+            addData(params)
+        }
     };
 
     return (
-        <Modal title="Basic Drawer" visible={visible} onOk={onOk} onCancel={onCancel}>
+        <Modal title="新增/编辑学生信息" visible={visible} onOk={onOk} onCancel={onCancel}>
             <Form form={form} layout="horizontal" name="userForm" onFinish={onFinish}>
                 <Form.Item
                     name="name"
