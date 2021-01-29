@@ -2,7 +2,7 @@
 
 一个增删改查的项目，用来学习GraphQL，分为服务端，在server里，用的GraphQL，Koa，Mongodb；页面在view里，用react，antd写的.  
 
-![image](images/1.gif)
+<video src="/images/show.mp4" width="800px" height="600px" controls="controls" autoplay="autoplay"></video>
 
 启动
 
