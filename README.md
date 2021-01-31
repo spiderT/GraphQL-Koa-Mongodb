@@ -2,7 +2,9 @@
 
 一个增删改查的项目，用来学习GraphQL，分为服务端，在server里，用的GraphQL，Koa，Mongodb；页面在view里，用react，antd写的.  
 
-<video src="/images/show.mp4" width="800px" height="600px" controls="controls" autoplay="autoplay"></video>
+![效果](images/show.gif)
+![效果](images/1.png)
+![效果](images/2.png)
 
 启动
 
@@ -26,9 +28,7 @@ npm start
     - [1.1. 标量类型（Scalar Types）](#11-标量类型scalar-types)
     - [1.2. 枚举类型（Enumeration Types）](#12-枚举类型enumeration-types)
     - [1.3. 列表和非空（Lists and Non-Null）](#13-列表和非空lists-and-non-null)
-  - [2. GraphQL操作](#2-graphql操作)
-  - [3. 分页](#3-分页)
-  - [4. apollo-server-koa](#4-apollo-server-koa)
+  - [2. apollo-server-koa](#2-apollo-server-koa)
 
 ## 1. GraphQL类型
 
@@ -134,10 +134,25 @@ myField: ['a', 'b'] // 有效
 myField: ['a', null, 'b'] // 有效
 ```
 
+## 2. apollo-server-koa
 
+```js
+import koa from 'koa'; // koa@2
+import koaRouter from 'koa-router';
+import koaBody from 'koa-bodyparser';
+import { graphqlKoa } from 'apollo-server-koa';
 
-## 2. GraphQL操作
+const app = new koa();
+const router = new koaRouter();
+const PORT = 3000;
 
-## 3. 分页
+// koaBody is needed just for POST.
+app.use(koaBody());
 
-## 4. apollo-server-koa
+router.post('/graphql', graphqlKoa({ schema: myGraphQLSchema }));
+router.get('/graphql', graphqlKoa({ schema: myGraphQLSchema }));
+
+app.use(router.routes());
+app.use(router.allowedMethods());
+app.listen(PORT);
+```
